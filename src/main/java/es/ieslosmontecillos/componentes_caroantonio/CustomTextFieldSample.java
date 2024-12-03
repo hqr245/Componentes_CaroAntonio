@@ -1,14 +1,8 @@
 package es.ieslosmontecillos.componentes_caroantonio;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
@@ -24,13 +18,19 @@ public class CustomTextFieldSample extends Application {
         HBox hbox = new HBox();
 
       Temporizador t1 = new Temporizador();
-      t1.setDuration(4);
+
+      t1.setTimer(3);
 
 
-      t1.setManejador(e->{
+      t1.setOnFinished(e->{
 
-          System.out.println("fin");
+
+          t1.setTimer(4);
+          t1.play();
+
       });
+
+
       t1.play();
 
         hbox.getChildren().addAll(t1);

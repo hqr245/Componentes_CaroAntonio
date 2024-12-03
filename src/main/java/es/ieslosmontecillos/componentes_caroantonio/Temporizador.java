@@ -1,11 +1,14 @@
 package es.ieslosmontecillos.componentes_caroantonio;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
@@ -13,58 +16,80 @@ import javafx.util.Duration;
 public class Temporizador extends Label {
 
     private final Timeline timeline;
-    private final IntegerProperty duration = new SimpleIntegerProperty();
+    private final IntegerProperty timer = new SimpleIntegerProperty();
+    private final KeyValue kv = new KeyValue(timer, 0);
 
-    private final ObjectProperty<EventHandler> manejadorProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<EventHandler<ActionEvent>> onFinished = new SimpleObjectProperty<>();
+
 
     public Temporizador() {
         super();
-        KeyFrame keyFrame= new KeyFrame(Duration.seconds(duration.get()));
-        timeline = new Timeline(keyFrame);
-        timeline.setCycleCount(1);
-        this.textProperty().bind(timeline.currentTimeProperty().asString());
-        timeline.setOnFinished( event -> {
-            manejadorProperty.get().handle(event);
+
+        onFinished.set(Event::consume);
+
+
+        KeyFrame kf = new KeyFrame(Duration.seconds(timer.get()), kv);
+
+
+       timer.addListener((observable, oldValue, newValue) -> {
+           setText("Quedan "+newValue+" s");
+       });
+
+
+       timeline = new Timeline(kf);
+       timeline.setCycleCount(1);
+
+       timeline.setOnFinished(event -> {
+
+           onFinished.get().handle(event);
+
         });
 
     }
 
-   public void play(){
+    public void play(){
+
+        timeline.getKeyFrames().clear();
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(timer.get()),kv));
+
         timeline.play();
     }
-    public void pause(){
-        timeline.pause();
-    }
+
+
     public void stop(){
+
         timeline.stop();
-    }
-
-
-    public int getDuration() {
-        return duration.get();
-    }
-    public void setDuration(int duration) {
-        this.duration.set(duration);
-    }
-
-    public IntegerProperty durationProperty() {
-        return duration;
-    }
-
-    public ObjectProperty<EventHandler> manejadorProperty() {
-
-        return manejadorProperty;
-    }
-
-    public void setManejador(EventHandler manejador) {
-        this.manejadorProperty.set(manejador);
-    }
-    public EventHandler getManejador() {
-        return manejadorProperty.get();
     }
 
 
     public Timeline getTimeline() {
         return timeline;
     }
+
+
+    public void setTimer(int time) {
+        timer.set(time);
+    }
+
+    public int getTimer() {
+        return timer.get();
+    }
+
+    public IntegerProperty timerProperty() {
+        return timer;
+    }
+
+
+    public EventHandler<ActionEvent> getOnFinished() {
+        return onFinished.get();
+    }
+
+    public ObjectProperty<EventHandler<ActionEvent>> onFinishedProperty() {
+        return onFinished;
+    }
+
+    public void setOnFinished(EventHandler<ActionEvent> onFinished) {
+        this.onFinished.set(onFinished);
+    }
+
 }
