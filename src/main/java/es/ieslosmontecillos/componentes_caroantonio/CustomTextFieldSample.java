@@ -17,18 +17,11 @@ public class CustomTextFieldSample extends Application {
 
         HBox hbox = new HBox();
 
-      Temporizador t1 = new Temporizador();
+      Temporizador2 t1 = new Temporizador2();
 
-      t1.setTimer(3);
-
-
-      t1.setOnFinished(e->{
+      t1.setTimer(10);
 
 
-          t1.setTimer(4);
-          t1.play();
-
-      });
 
 
       t1.play();

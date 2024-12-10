@@ -23,6 +23,7 @@ public class CampoTextoBoton extends HBox {
 
     @FXML
     private Button boton;
+
     public CampoTextoBoton() {
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("campotextoboton.fxml"));

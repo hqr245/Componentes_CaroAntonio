@@ -1,5 +1,6 @@
 package es.ieslosmontecillos.componentes_caroantonio;
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -12,41 +13,60 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
+import org.w3c.dom.css.RGBColor;
 
-public class Temporizador extends Label {
+public class Temporizador2 extends Label {
 
     private final Timeline timeline;
     private final IntegerProperty timer = new SimpleIntegerProperty();
-    private final KeyValue kv = new KeyValue(timer, 0);
+
+
+    private final IntegerProperty red = new SimpleIntegerProperty();
+    private final IntegerProperty green = new SimpleIntegerProperty(255);
+
+
+
+    private final KeyValue keyValueTimer = new KeyValue(timer, 0);
+
+    private final KeyValue redKeyValue = new KeyValue(red, 255);
+    private final KeyValue greenKeyValue = new KeyValue(green, 255);
+    private final KeyValue greenToZeroKeyValue = new KeyValue(green, 0);
+
+
+
     private final ObjectProperty<EventHandler<ActionEvent>> onFinished = new SimpleObjectProperty<>();
 
 
-    public Temporizador() {
+
+    public Temporizador2() {
         super();
 
         this.setText("Temporizador");
         onFinished.set(Event::consume);
 
 
-        KeyFrame kf = new KeyFrame(Duration.seconds(timer.get()), kv);
+
+        timer.addListener((observable, oldValue, newValue) -> {
+            setText("Quedan "+newValue+" s");
+        });
 
 
+        timeline = new Timeline();
+        timeline.setCycleCount(Animation.INDEFINITE);
+
+        timeline.setOnFinished(event -> {
+
+            onFinished.get().handle(event);
+
+        });
 
 
-       timer.addListener((observable, oldValue, newValue) -> {
-           setText("Quedan "+newValue+" s");
+        red.addListener((observable, oldValue, newValue) -> {
+           changeColor(newValue.intValue(),green.get(),0);
+        });
 
-
-       });
-
-
-       timeline = new Timeline(kf);
-       timeline.setCycleCount(1);
-
-       timeline.setOnFinished(event -> {
-
-           onFinished.get().handle(event);
-
+        green.addListener((observable, oldValue, newValue) -> {
+            changeColor(red.get(),newValue.intValue(),0);
         });
 
     }
@@ -54,11 +74,19 @@ public class Temporizador extends Label {
     public void play(){
 
         timeline.getKeyFrames().clear();
-        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(timer.get()),kv));
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(timer.get()),keyValueTimer,greenToZeroKeyValue));
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(timer.get()/2f),greenKeyValue,redKeyValue));
 
         timeline.play();
     }
 
+
+    private void changeColor(int red, int green, int blue){
+
+        this.setStyle("-fx-text-fill: rgb(" + red + "," + green + "," + blue + ");-fx-background-color: #000000");
+
+
+    }
 
     public void stop(){
 

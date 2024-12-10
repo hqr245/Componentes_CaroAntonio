@@ -25,8 +25,8 @@ public class SelectorDeslizamiento extends AnchorPane {
     int selectedIndex;
     private boolean repetitive;
 
-    public SelectorDeslizamiento() {FXMLLoader fxmlLoader = new FXMLLoader(
-            getClass().getResource("selector_deslizamiento.fxml"));
+    public SelectorDeslizamiento() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("selector_deslizamiento.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
         try {
